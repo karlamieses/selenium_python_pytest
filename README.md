@@ -31,6 +31,10 @@ Prerequisites (If you want to run from your terminal):
 - Install Selenium
 
 Prerequisites (If you want to run from PyCharm):
-- Downdload PyCharm
+- Download PyCharm
 - Install Python
+
+
+Commands:
+
 

@@ -19,8 +19,9 @@ class YoutubeCookiePopup:
     def open(self):
         self.driver.get(BASE_URL)
 
-    def click_accept_cookies(self):
+    def click_accept_cookies(self, driver):
         accept_cookie_button = self.driver.find_element(*self.accept_cookie_button_locator)
+        WebDriverWait(driver, 30).until(EC.element_to_be_clickable(*accept_cookie_button))
         accept_cookie_button.click()
 
 
@@ -28,6 +29,7 @@ class YoutubeCookiePopup:
 def driver():
     chrome_options = Options()
     chrome_options.add_experimental_option("detach", True)
+    chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(options=chrome_options)
 
     yield driver
