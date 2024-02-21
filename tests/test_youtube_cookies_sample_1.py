@@ -11,11 +11,12 @@ from utils.env import BASE_URL
 
 @pytest.fixture(scope='module')
 def driver():
-    # This is needed so browser is not closed automatically after test
+    # Options provides attributes to the browser, in this case chrome
+    # "detach", won't close the browser as soon as is launched
     chrome_options = Options()
     chrome_options.add_experimental_option("detach", True)
+    chrome_options.add_argument("--headless")
 
-    # This is needed to specify the browser and let the browser know it won't close automatically
     driver = webdriver.Chrome(options=chrome_options)
 
     # This launch the browser/driver
@@ -30,16 +31,12 @@ def test_accept_button_closes_cookies_concept_popup(driver):
     driver.get(BASE_URL)
 
     # This search the element and store it into a variable, XPATHs locators are not recommended ⚠️
-   # accept_all = driver.find_element(By.XPATH,
-    #                                  '//*[@id="content"]/div[2]/div[6]/div[1]/ytd-button-renderer[2]/yt-button-shape/button/yt-touch-feedback-shape/div/div[2]')
+    accept_all = (By.XPATH, '//*[@id="content"]/div[2]/div[6]/div[1]/ytd-button-renderer[2]/yt-button-shape/button/'
+                            'yt-touch-feedback-shape/div/div[2]')
 
-    accept_all = By.XPATH, '//*[@id="content"]/div[2]/div[6]/div[1]/ytd-button-renderer[2]/yt-button-shape/button/yt-touch-feedback-shape/div/div[2]'
+    accept_all_element = driver.find_element(*accept_all)
 
-    WebDriverWait(driver, 10).until(EC.visibility_of_element_located(accept_all)).click()
+    WebDriverWait(driver, 30).until(EC.presence_of_element_located(accept_all)).click()
 
-    # accept_all.click()
+    assert WebDriverWait(driver, 30).until(EC.staleness_of(accept_all_element))
 
-    # After the click, we want to give time to the browser to close the popup, so our assertion is not flaky
-    WebDriverWait(driver, 10).until(EC.invisibility_of_element(accept_all))
-
-    assert not driver.find_element(accept_all).is_displayed()

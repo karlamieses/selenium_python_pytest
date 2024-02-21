@@ -1,17 +1,19 @@
 import pytest
 
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
+from locators.cookies_popup_locators import CookiesPopupLocators
+from pages.cookies_popup import CookiesPopup
 
-from resources.cookies_popup import YoutubeCookiePopup
+from selenium.webdriver.chrome.options import Options
+from selenium import webdriver
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 @pytest.fixture(scope='module')
 def driver():
     chrome_options = Options()
     chrome_options.add_experimental_option("detach", True)
+    chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(options=chrome_options)
 
     yield driver
@@ -20,11 +22,10 @@ def driver():
 
 
 def test_accept_all_cookies_closes_popup(driver):
-    youtube_cookie_popup = YoutubeCookiePopup(driver)
+    youtube_cookie_popup = CookiesPopup(driver)
     youtube_cookie_popup.open()
-    youtube_cookie_popup.click_accept_cookies()
+    youtube_cookie_popup.click_accept_cookies(driver)
 
-    WebDriverWait(driver, 10).until_not(EC.visibility_of_element_located(*youtube_cookie_popup.accept_cookie_button_locator))
+    accept_all_cookies_locator = driver.find_element(*CookiesPopupLocators.ACCEPT_ALL_COOKIES)
 
-    assert not driver.find_element(*youtube_cookie_popup.accept_cookie_button_locator)
-
+    assert WebDriverWait(driver, 30).until(EC.staleness_of(accept_all_cookies_locator))
