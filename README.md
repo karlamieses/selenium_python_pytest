@@ -36,5 +36,8 @@ Prerequisites (If you want to run from PyCharm):
 
 
 Commands:
+To run the all the test, make sure the following:
+- You are positioned in the root folder, this will run all the tests within the "tests" folder
+Run the command `pytest`
 
 
